@@ -42,6 +42,13 @@ A função find_document() aceita 3 (três) parâmetros, sendo: um valor de busc
 
     print(db.find_document('Pedro', ['items', 'name'], 1))
 
+#### Inserir
+A função insert_one() aceita um parâmetro, sendo um dicionário Python.
+
+    db.insert_one({'_id':123456, 'name':'Pedro'})
+
+Se não for definido a chave-valor "_id" será gerado um automaticamente. Lembrando que o (objectId) não pode ser atualizado.
+
 #### Atualizar
 A função update() aceita 4 (quatro) parâmetros, sendo: um valor de busca, uma lista com o caminho até o valor, informação atualizada, e, o limite.
 
