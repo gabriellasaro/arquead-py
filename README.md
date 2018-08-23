@@ -23,7 +23,7 @@ Para se conecatar com o banco de dados arquea é somente necessário passar o di
     print(db.get_collections())
 
 #### Definir coleção
-Para pesquisar, atualizar, inserir e remover qualquer arquivo, é necessário definir um coleçõa.
+Para pesquisar, atualizar, inserir e remover qualquer arquivo, é necessário definir um coleção.
 
     db.set_collection('user_profile')
 
