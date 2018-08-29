@@ -1,6 +1,6 @@
 import os
 from arquea.error import ReturnMessage, Error
-from arquea.files import CheckDB, InterpretFileConf
+from arquea.files import CheckDB, InterpretFileConf, NewFileConf
 from arquea.data import Collection, CreateCollection, NewDocument, SearchDocument, RemoveDocument
 class Arquea(Error):
 
@@ -39,6 +39,16 @@ class Arquea(Error):
     def get_last_err(self):
         return ReturnMessage(self.directory, self.error_code()).show()
     
+    def create_database(self, name = None):
+        if not name:
+            return ReturnMessage(name, 501).show()
+        if not name in os.listdir():
+            os.mkdir(name)
+            name = name+'/'
+            create_file = NewFileConf(name).create()
+            return ReturnMessage(name, 200).show()
+        return ReturnMessage(name, 505).show()
+    
     def create_collection(self, name = None):
         new = CreateCollection(self.directory)
         new.new(name)
@@ -46,9 +56,15 @@ class Arquea(Error):
             return ReturnMessage(self.directory, new.error_code()).show()
         return ReturnMessage(self.directory, 200).show()
     
+    collection = None
+
     def set_collection(self, collection = None):
         if not collection:
+            self.collection = None
             return ReturnMessage(self.directory, 501).show()
+        if not collection in self.get_collections():
+            self.collection = None
+            return ReturnMessage(self.directory, 406).show()
         self.collection = collection
         return ReturnMessage(self.directory, 200).show()
     
@@ -64,6 +80,8 @@ class Arquea(Error):
     def insert_one(self, data = None):
         if not self.collection or not data:
             return ReturnMessage(self.directory, 501).show()
+        if not self.collection in self.get_collections():
+            return ReturnMessage(self.directory, 406).show()
         insert = NewDocument(self.directory, self.collection)
         insert.insert_one(data)
         if insert.error_status():
