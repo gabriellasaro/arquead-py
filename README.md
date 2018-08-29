@@ -1,7 +1,7 @@
 # ArqueaDB
-Um banco de dados NoSQL feito em Python.
+Um pequeno banco de dados NoSQL feito em Python.
 
-A NoSQL database made in Python.
+A small NoSQL database made in Python.
 
 ## Documentação
 
