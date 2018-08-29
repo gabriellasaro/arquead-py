@@ -5,17 +5,26 @@ A small NoSQL database made in Python.
 
 ## Documentação
 
-### Criar um banco de dados
-Para criar um banco de dados execute o seguinte comando:
+### Instalação
+Você pode instalar o ArqueaDB atravez do pip:
 
+    pip install arquea
+
+### Criar um banco de dados
+Para criar um banco de dados execute o seguinte comando no diretório desejado:
+
+    python3 -m arquea --create name_database
+
+Ou:
+
+    from arquea import Arquea
     db = Arquea()
-    name = "nome_do_banco"
-    db.create_database(name)
+    db.create_database("name_database")
 
 ### Conexão:
 Para se conecatar com o banco de dados arquea é somente necessário passar o diretório em que se encontra o banco.
 
-    from arquea.arquea import Arquea
+    from arquea import Arquea
     db = Arquea()
     con = db.connec("/home/user/arqueadb/aq-db/")
     if con['status']!=200:
