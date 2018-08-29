@@ -1,7 +1,16 @@
 # ArqueaDB
+Um banco de dados NoSQL feito em Python.
+
 A NoSQL database made in Python.
 
 ## Documentação
+
+### Criar um banco de dados
+Para criar um banco de dados execute o seguinte comando:
+
+    db = Arquea()
+    name = "nome_do_banco"
+    db.create_database(name)
 
 ### Conexão:
 Para se conecatar com o banco de dados arquea é somente necessário passar o diretório em que se encontra o banco.

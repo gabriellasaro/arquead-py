@@ -1,5 +1,6 @@
 import os
 from arquea.error import Error
+from arquea.info import InfoArquea
 class CheckDB:
 
     def __init__(self, directory):
@@ -71,3 +72,15 @@ class InterpretFileConf(Error):
         for x in self.data:
             info[self.name_var[x[0]]] = x[1]
         return info
+
+class NewFileConf():
+
+    def __init__(self, directory):
+        self.directory = directory
+    
+    def create(self):
+        file_name = 'conf.arquea'
+        data = 'VERSION = {}'.format(InfoArquea().get_version())
+        with open(self.directory+file_name, 'w') as document:
+            document.write(data)
+            document.close()

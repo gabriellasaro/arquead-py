@@ -16,6 +16,7 @@ class ReturnMessage():
             502:'Erro ao criar coleção',
             503:'Já existe uma coleção/objeto com está identificação',
             504:'Erro ao criar banco de dados',
+            505:'Já existe um diretório/documento com este nome',
             506:'Nada encontrado para atualizar',
             508:'Ação não permitida'
         }
