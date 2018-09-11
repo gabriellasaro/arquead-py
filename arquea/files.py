@@ -18,7 +18,7 @@ class CheckDB:
         for x in items:
             if os.path.isdir(self.directory+x):
                 collections.append(x)
-        return collections
+        return tuple(collections)
 
     def check_collection_exists(self, collection):
         if collection in self.get_collections():

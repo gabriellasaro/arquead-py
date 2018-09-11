@@ -3,6 +3,14 @@ Um pequeno banco de dados NoSQL feito em Python.
 
 A small NoSQL database made in Python.
 
+### Alterações v0.1.1
+- Retornos em tuple no lugar de list em algumas funções;
+- Nova função get_current_collection() retorno a coleção definida;
+- Nova função get_current_directory() retorna o diretório de operação atual;
+- Agumas correções nas funções create_database(), find_document(), updade() e remove();
+- Nova funcionalidade na função connect(directory, collection), é permitido passar a coleção diretamente nela;
+- Nova função checksum_sha256(objectId) retorna uma hash (sha256) do documento solicitado (aceita somente objectId como parâmetro de busca);
+
 ## Documentação
 
 ### Instalação
@@ -78,7 +86,9 @@ A função remove() aceita 3 (parâmetros), sendo: um valor de busca, uma lista 
     db.remove('value', ['key'], 0)
 
 #### Observação
-A função get_last_err() funciona somente com as funções: get_documents(), find_document(), update(), remove().
+A função get_last_err() funciona somente com as funções: checksum_sha256(), get_documents(), find_document(), update(), remove().
+
+Cuidado com o uso desta função.
 
     print(db.get_last_err())
 
@@ -104,9 +114,9 @@ A função get_db_info() retorna a versão do banco de dados conectado. Estando 
     503:'Já existe uma coleção/objeto com está identificação',
     504:'Erro ao criar banco de dados',
     505:'Já existe um diretório/documento com este nome',
-    506:'Nada encontrado para atualizar',
+    506:'Nenhum documento encontrado',
     508:'Ação não permitida'
 
 Exemplo de retorno:
 
-    {'status': 404, 'directory': '/home/user/arqueadb/aq-db/', 'message': 'Diretório do banco de dados não encontrado.'}
+    {'status': 404, 'message': 'Diretório do banco de dados não encontrado.'}

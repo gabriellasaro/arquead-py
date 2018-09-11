@@ -1,8 +1,7 @@
 class ReturnMessage():
 
-    def __init__(self, directory, code_error = 500):
-        self.directory = directory
-        self.code_error = code_error
+    def __init__(self, error = 500):
+        self.code_error = error
         self.error_list = {
             200:'OK',
             300:'Versão do banco de dados não é compatível',
@@ -17,14 +16,14 @@ class ReturnMessage():
             503:'Já existe uma coleção/objeto com está identificação',
             504:'Erro ao criar banco de dados',
             505:'Já existe um diretório/documento com este nome',
-            506:'Nada encontrado para atualizar',
+            506:'Nenhum documento encontrado',
             508:'Ação não permitida'
         }
     
     def show(self):
         if self.code_error in self.error_list.keys():
-            return {'status':self.code_error, 'directory':self.directory, 'message':self.error_list[self.code_error]}
-        return {'status':500, 'directory':self.directory, 'message':self.error_list[500]}
+            return {'status':self.code_error, 'message':self.error_list[self.code_error]}
+        return {'status':500, 'message':self.error_list[500]}
 
 class Error:
     
