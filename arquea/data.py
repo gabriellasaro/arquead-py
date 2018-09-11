@@ -11,7 +11,7 @@ class Collection():
             self.collection_directory = directory
         
     def get_documents(self):
-        return os.listdir(self.collection_directory)
+        return tuple(os.listdir(self.collection_directory))
 
 class CreateCollection(Error):
 
@@ -52,6 +52,7 @@ class NewDocument(Collection, Error):
             if str(objectId)+'.json' in self.get_documents():
                 # self.info_insert['failed']+=1
                 return self.set_status_error(True, 503)
+        # Alterar json.dumps atenção para erros
         self.write_file(objectId, data)
         # self.info_insert['success']+=1
     
@@ -63,11 +64,11 @@ class NewDocument(Collection, Error):
         return objectId
     
     def update_many(self, value, key, data, limit = 1):
-        documents = SearchDocument(self.collection_directory, 0, True).value_in_key(value, key, limit)
-        results = {'success':0, 'total':len(documents), 'objectId_success':[]}
         if '_id' in data:
             self.set_status_error(True, 508)
-            return results
+            return {'success':0, 'total':0, 'objectId_success':[]}
+        documents = SearchDocument(self.collection_directory, 0, True).value_in_key(value, key, limit)
+        results = {'success':0, 'total':len(documents), 'objectId_success':[]}
         if not documents:
             self.set_status_error(True, 506)
             return results
@@ -92,9 +93,9 @@ class SearchDocument(Collection):
             if key[0] == '_id':
                 file_dir = str(value)+'.json'
                 if file_dir in self.get_documents():
-                    return [self.get_data_file(file_dir)]
+                    return (self.get_data_file(file_dir),)
                 else:
-                    return []
+                    return ()
             else:
                 results = 0
                 data_documents = []
@@ -107,7 +108,7 @@ class SearchDocument(Collection):
                             if limit>0:
                                 if results == limit:
                                     break
-                return data_documents
+                return tuple(data_documents)
         else:
             results = 0
             data_documents = []
@@ -142,7 +143,7 @@ class SearchDocument(Collection):
                             break
                     data_documents.append(data)
                     results+=1
-            return data_documents
+            return tuple(data_documents)
     
     def get_data_file(self, file_dir):
         dFile = open(self.collection_directory+file_dir, 'r')
