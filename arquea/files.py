@@ -1,6 +1,7 @@
 import os
 from arquea.error import Error
 from arquea.info import InfoArquea
+from arquea.tools import TypeDir
 class CheckDB:
 
     def __init__(self, directory):
@@ -8,7 +9,7 @@ class CheckDB:
     
     def check(self):
         file_name = 'conf.arquea'
-        if os.path.exists(self.directory+file_name) and not os.path.exists(self.directory+file_name+'/'):
+        if os.path.exists(self.directory+file_name) and not os.path.exists(self.directory+file_name+TypeDir().bar_type()):
             return True
         return False
     
@@ -83,4 +84,3 @@ class NewFileConf():
         data = 'VERSION = {}'.format(InfoArquea().get_version())
         with open(self.directory+file_name, 'w') as document:
             document.write(data)
-            document.close()
