@@ -17,7 +17,8 @@ class ReturnMessage():
             504:'Erro ao criar banco de dados',
             505:'Já existe um diretório/documento com este nome',
             506:'Nenhum documento encontrado',
-            508:'Ação não permitida'
+            508:'Ação não permitida',
+            509:'Faltando dados para validar operação'
         }
     
     def show(self):

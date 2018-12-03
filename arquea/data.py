@@ -2,11 +2,12 @@ import os, json
 from random import randint
 from arquea.error import Error
 from arquea.files import CheckDB
+from arquea.tools import TypeDir
 class Collection():
 
     def __init__(self, directory, collection, dc = False):
         if not dc:
-            self.collection_directory = directory+collection+'/'
+            self.collection_directory = directory+collection+TypeDir().bar_type()
         else:
             self.collection_directory = directory
         
@@ -31,17 +32,25 @@ class CreateCollection(Error):
         else:
             return self.set_status_error(True, 503)
 
-class NewDocument(Collection, Error):
+class Document(Collection):
 
-    # info_insert = {'success':0, 'failed':0}
+    def write_file(self, objectId, data):
+        file_name = str(objectId)+'.json'
+        with open(self.collection_directory+file_name, 'w') as document:
+            document.write(json.dumps(data))
+            document.close()
 
+class NewDocument(Document):
+    
     def insert_one(self, data):
-        self.insert(data)
+        return self.insert(data)
     
     def insert_many(self, data):
+        info = []
         for x in data:
-            self.insert_one(x)
-
+            info.append(self.insert(x))
+        return tuple(info)
+    
     def insert(self, data):
         if not '_id' in data:
             objectId = self.auto_object_id()
@@ -50,11 +59,9 @@ class NewDocument(Collection, Error):
             data['_id'] = str(data['_id']).replace(' ', '_')
             objectId = data['_id']
             if str(objectId)+'.json' in self.get_documents():
-                # self.info_insert['failed']+=1
-                return self.set_status_error(True, 503)
-        # Alterar json.dumps atenção para erros
+                return {'status':503, 'objectId':objectId}
         self.write_file(objectId, data)
-        # self.info_insert['success']+=1
+        return {'status':200, 'objectId':objectId}
     
     def auto_object_id(self):
         while True:
@@ -62,7 +69,9 @@ class NewDocument(Collection, Error):
             if not str(objectId)+'.json' in self.get_documents():
                 break
         return objectId
-    
+
+class UpdateDocument(Document, Error):
+
     def update_many(self, value, key, data, limit = 1):
         if '_id' in data:
             self.set_status_error(True, 508)
@@ -79,12 +88,6 @@ class NewDocument(Collection, Error):
             results['success']+=1
             results['objectId_success'].append(objectId)
         return results
-    
-    def write_file(self, objectId, data):
-        file_name = str(objectId)+'.json'
-        with open(self.collection_directory+file_name, 'w') as document:
-            document.write(json.dumps(data))
-            document.close()
 
 class SearchDocument(Collection):
 

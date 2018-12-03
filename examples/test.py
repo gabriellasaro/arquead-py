@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-from arquea.arquea import Arquea
+from arquea import Arquea
 db = Arquea()
 con = db.connect("/home/user/arqueadb/aq-db/")
 if con['status']!=200:

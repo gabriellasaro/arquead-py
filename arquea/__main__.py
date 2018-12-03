@@ -20,7 +20,7 @@ if len(sys.argv)>=2:
     elif sys.argv[1] == '--help':
         print("Você pode obter ajuda no repositório oficial - {}".format(info.get_repository()))
     elif sys.argv[1] == '--compatible':
-        print("Lista de banco de dados compatíveis com a versão corrente:")
+        print("Lista de banco de dados compatíveis com a versão corrente ({}):".format(info.get_version()))
         for version in info.get_compatible():
             print(" {}".format(version))
     elif sys.argv[1] == '--create':

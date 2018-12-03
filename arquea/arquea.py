@@ -1,8 +1,9 @@
 import os
 from arquea.error import ReturnMessage, Error
 from arquea.files import CheckDB, InterpretFileConf, NewFileConf
-from arquea.data import Collection, CreateCollection, NewDocument, SearchDocument, RemoveDocument
+from arquea.data import Collection, CreateCollection, NewDocument, UpdateDocument, SearchDocument, RemoveDocument
 from arquea.checksum import CheckSum
+from arquea.tools import TypeDir
 class Arquea(Error):
 
     def __init__(self):
@@ -22,9 +23,8 @@ class Arquea(Error):
             return ReturnMessage(404).show()
         self.directory = directory
         
-        # Corrigir o possível erro da "/" no Windows
-        if not self.directory[-1:] == '/':
-            self.directory = directory+'/'
+        if not self.directory[-1:] == '/' or not self.directory[-1:] == '\\':
+            self.directory = directory+TypeDir().bar_type()
         
         if not os.path.isdir(self.directory):
             return ReturnMessage(404).show()
@@ -84,14 +84,14 @@ class Arquea(Error):
             return ReturnMessage(501).show()
         if not os.path.exists(name):
             os.mkdir(name)
-            name = name+'/'
-            create_file = NewFileConf(name).create()
+            name = name+TypeDir().bar_type()
+            NewFileConf(name).create()
             return ReturnMessage(200).show()
         return ReturnMessage(505).show()
     
     def create_collection(self, name = None):
-        if self.connect_level()>=1:
-            return ReturnMessage(501).show()
+        if self.connect_level()==0:
+            return ReturnMessage(509).show()
         new = CreateCollection(self.directory)
         new.new(name)
         if new.error_status():
@@ -100,7 +100,8 @@ class Arquea(Error):
     
     def checksum_sha256(self, objectId):
         if not self.valid_connect():
-            return ReturnMessage(501).show()
+            self.set_status_error(True, 509)
+            return {'total':0}
         check = CheckSum(self.directory, self.collection)
         result = check.get_sha256(objectId)
         if check.error_status():
@@ -110,22 +111,30 @@ class Arquea(Error):
     
     def get_documents(self):
         if not self.valid_connect():
-            self.set_status_error(True, 501)
+            self.set_status_error(True, 509)
             return ()
         return Collection(self.directory, self.collection).get_documents()
-    
+
     def insert_one(self, data = None):
         if not self.valid_connect():
-            return ReturnMessage(501).show()
+            self.set_status_error(True, 509)
+            return {'status':509, 'objectId':None}
         insert = NewDocument(self.directory, self.collection)
-        insert.insert_one(data)
-        if insert.error_status():
-            return ReturnMessage(insert.error_code()).show()
-        return ReturnMessage(200).show()
-    
+        return insert.insert_one(data)
+
+    def insert_many(self, data = None):
+        if not self.valid_connect():
+            self.set_status_error(True, 509)
+            return ()
+        if not type(data) is list and not type(data) is tuple:
+            self.set_status_error(True, 501)
+            return ()
+        insert = NewDocument(self.directory, self.collection)
+        return insert.insert_many(data)
+
     def find_document(self, value = None, key = None, limit = 0):
         if not self.valid_connect():
-            self.set_status_error(True, 501)
+            self.set_status_error(True, 509)
             return ()
         if not value:
             self.set_status_error(True, 501)
@@ -137,7 +146,7 @@ class Arquea(Error):
     
     def update(self, value = None, key = None, data = None, limit = 1):
         if not self.valid_connect():
-            self.set_status_error(True, 501)
+            self.set_status_error(True, 509)
             return {'success':0, 'total':0, 'objectId_success':[]}
         if not value:
             self.set_status_error(True, 501)
@@ -148,7 +157,7 @@ class Arquea(Error):
         if not data:
             self.set_status_error(True, 501)
             return {'success':0, 'total':0, 'objectId_success':[]}
-        results = NewDocument(self.directory, self.collection)
+        results = UpdateDocument(self.directory, self.collection)
         data = results.update_many(value, key, data, limit)
         if results.error_status():
             self.set_status_error(results.error_status(), results.error_code())
@@ -157,7 +166,7 @@ class Arquea(Error):
 
     def remove(self, value = None, key = None, limit = 1):
         if not self.valid_connect():
-            self.set_status_error(True, 501)
+            self.set_status_error(True, 509)
             return {'success':0, 'total':0, 'objectId_success':[]}
         if not value:
             self.set_status_error(True, 501)

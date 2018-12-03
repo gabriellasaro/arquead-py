@@ -3,13 +3,18 @@ Um pequeno banco de dados NoSQL feito em Python.
 
 A small NoSQL database made in Python.
 
-### Alterações v0.1.1
+### Alterações v0.2.0
+- Resolvido o problema de formatação dos diretórios no Windows;
+- Remoção de alguns códigos redundantes;
 - Retornos em tuple no lugar de list em algumas funções;
+- Alteração na função insert_one();
+- Nova função de inserção: insert_many() para inserir listas de dicionários;
 - Nova função get_current_collection() retorno a coleção definida;
 - Nova função get_current_directory() retorna o diretório de operação atual;
 - Agumas correções nas funções create_database(), find_document(), updade() e remove();
 - Nova funcionalidade na função connect(directory, collection), é permitido passar a coleção diretamente nela;
 - Nova função checksum_sha256(objectId) retorna uma hash (sha256) do documento solicitado (aceita somente objectId como parâmetro de busca);
+- Tabela de código de erros atualizada e pequena alteração na função de retorno de erro.
 
 ## Documentação
 
@@ -73,6 +78,15 @@ A função insert_one() aceita um parâmetro, sendo um dicionário Python.
 
     db.insert_one({'_id':123456, 'name':'Pedro'})
 
+A função insert_many() aceita um parâmetro, sendo do tipo lista ou tupla Python.
+
+    list_items = [
+        {'name':'Pedro', 'age':38},
+        {'name':'Maria', 'age':37}
+    ]
+
+    db.insert_many(list_items)
+
 Se não for definido a chave-valor "_id" será gerado um automaticamente. Lembrando que o (objectId) não pode ser atualizado.
 
 #### Atualizar
@@ -115,7 +129,8 @@ A função get_db_info() retorna a versão do banco de dados conectado. Estando 
     504:'Erro ao criar banco de dados',
     505:'Já existe um diretório/documento com este nome',
     506:'Nenhum documento encontrado',
-    508:'Ação não permitida'
+    508:'Ação não permitida',
+    509:'Faltando dados para validar operação'
 
 Exemplo de retorno:
 
