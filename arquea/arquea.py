@@ -57,8 +57,6 @@ class Arquea(Error):
         if self.connect_level()==0:
             return ReturnMessage(501).show()
         if not collection in self.get_collections():
-            print(collection)
-            print(self.get_collections())
             self.collection = None
             return ReturnMessage(406).show()
         self.collection = collection
@@ -80,7 +78,7 @@ class Arquea(Error):
         return ReturnMessage(self.error_code()).show()
     
     def create_database(self, name = None):
-        if not name:
+        if type(name) is not str:
             return ReturnMessage(501).show()
         if not os.path.exists(name):
             os.mkdir(name)
@@ -90,6 +88,8 @@ class Arquea(Error):
         return ReturnMessage(505).show()
     
     def create_collection(self, name = None):
+        if type(name) is not str:
+            return ReturnMessage(501).show()
         if self.connect_level()==0:
             return ReturnMessage(509).show()
         new = CreateCollection(self.directory)
@@ -116,6 +116,9 @@ class Arquea(Error):
         return Collection(self.directory, self.collection).get_documents()
 
     def insert_one(self, data = None):
+        if type(data) is not dict:
+            self.set_status_error(True, 501)
+            return {'status':501, 'objectId':None}
         if not self.valid_connect():
             self.set_status_error(True, 509)
             return {'status':509, 'objectId':None}
@@ -136,10 +139,10 @@ class Arquea(Error):
         if not self.valid_connect():
             self.set_status_error(True, 509)
             return ()
-        if not value:
+        if value is None:
             self.set_status_error(True, 501)
             return ()
-        if not key:
+        if type(key) is not list or type(key) is not tuple:
             self.set_status_error(True, 501)
             return ()
         return SearchDocument(self.directory, self.collection).value_in_key(value, key, limit)
@@ -148,13 +151,13 @@ class Arquea(Error):
         if not self.valid_connect():
             self.set_status_error(True, 509)
             return {'success':0, 'total':0, 'objectId_success':[]}
-        if not value:
+        if value is None:
             self.set_status_error(True, 501)
             return {'success':0, 'total':0, 'objectId_success':[]}
-        if not key:
+        if type(key) is not list or type(key) is not tuple:
             self.set_status_error(True, 501)
             return {'success':0, 'total':0, 'objectId_success':[]}
-        if not data:
+        if type(data) is not dict:
             self.set_status_error(True, 501)
             return {'success':0, 'total':0, 'objectId_success':[]}
         results = UpdateDocument(self.directory, self.collection)
@@ -168,10 +171,10 @@ class Arquea(Error):
         if not self.valid_connect():
             self.set_status_error(True, 509)
             return {'success':0, 'total':0, 'objectId_success':[]}
-        if not value:
+        if value is None:
             self.set_status_error(True, 501)
             return {'success':0, 'total':0, 'objectId_success':[]}
-        if not key:
+        if type(key) is not list or type(key) is not tuple:
             self.set_status_error(True, 501)
             return {'success':0, 'total':0, 'objectId_success':[]}
         results = RemoveDocument(self.directory, self.collection)
