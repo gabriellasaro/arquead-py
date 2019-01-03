@@ -1,11 +1,11 @@
 class InfoArquea:
 
     def __init__(self):
-        self.version = "0.2.0"
+        self.version = "0.2.1"
         self.name = "ArqueaDB"
-        self.release_date = "ArqueaDB v{} 2018-12-02 LinuxMint-19-tara/Linux".format(self.version)
+        self.release_date = "ArqueaDB v{} 2019-01-03 LinuxMint-19.1-tessa/Linux".format(self.version)
         self.repository = "https://github.com/gabriellasaro/arqueadb/"
-        self.compatible_version = ("0.1.0",)
+        self.compatible_version = ("0.1.0", "0.2.0")
     
     def get_info(self):
         return (self.version, self.name, self.release_date, self.repository)
