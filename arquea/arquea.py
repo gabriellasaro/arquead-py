@@ -142,7 +142,7 @@ class Arquea(Error):
         if value is None:
             self.set_status_error(True, 501)
             return ()
-        if type(key) is not list or type(key) is not tuple:
+        if type(key) is not list and type(key) is not tuple:
             self.set_status_error(True, 501)
             return ()
         return SearchDocument(self.directory, self.collection).value_in_key(value, key, limit)
@@ -154,7 +154,7 @@ class Arquea(Error):
         if value is None:
             self.set_status_error(True, 501)
             return {'success':0, 'total':0, 'objectId_success':[]}
-        if type(key) is not list or type(key) is not tuple:
+        if type(key) is not list and type(key) is not tuple:
             self.set_status_error(True, 501)
             return {'success':0, 'total':0, 'objectId_success':[]}
         if type(data) is not dict:
@@ -174,7 +174,7 @@ class Arquea(Error):
         if value is None:
             self.set_status_error(True, 501)
             return {'success':0, 'total':0, 'objectId_success':[]}
-        if type(key) is not list or type(key) is not tuple:
+        if type(key) is not list and type(key) is not tuple:
             self.set_status_error(True, 501)
             return {'success':0, 'total':0, 'objectId_success':[]}
         results = RemoveDocument(self.directory, self.collection)
