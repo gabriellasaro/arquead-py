@@ -3,7 +3,7 @@ Um pequeno banco de dados NoSQL feito em Python.
 
 A small NoSQL database made in Python.
 
-### Correções v0.2.1
+### Correções v0.2.2
 - Resolvido um pequeno problema encontrado no tratamento de parâmetros de algumas funções;
 - Novo recurso: "python3 -m arquea --error-list" para obter a lista de erros.
 
