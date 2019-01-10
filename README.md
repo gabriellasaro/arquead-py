@@ -5,7 +5,7 @@ A small NoSQL database made in Python.
 
 ### Correções v0.2.1
 - Resolvido um pequeno problema encontrado no tratamento de parâmetros de algumas funções;
-- Novo recurso: python3 -m arquea --error-list para obter a lista de erros.
+- Novo recurso: "python3 -m arquea --error-list" para obter a lista de erros.
 
 ### Alterações v0.2.0
 - Resolvido o problema de formatação dos diretórios no Windows;
