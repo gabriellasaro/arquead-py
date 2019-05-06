@@ -3,24 +3,9 @@ Um pequeno banco de dados NoSQL feito em Python.
 
 A small NoSQL database made in Python.
 
-### Correções v0.2.2
-- Resolvido um pequeno problema encontrado no tratamento de parâmetros de algumas funções;
-- Novo recurso: "python3 -m arquea --error-list" para obter a lista de erros.
 
-### Alterações v0.2.0
-- Resolvido o problema de formatação dos diretórios no Windows;
-- Remoção de alguns códigos redundantes;
-- Retornos em tuple no lugar de list em algumas funções;
-- Alteração na função insert_one();
-- Nova função de inserção: insert_many() para inserir listas de dicionários;
-- Nova função get_current_collection() retorno a coleção definida;
-- Nova função get_current_directory() retorna o diretório de operação atual;
-- Agumas correções nas funções create_database(), find_document(), updade() e remove();
-- Nova funcionalidade na função connect(directory, collection), é permitido passar a coleção diretamente nela;
-- Nova função checksum_sha256(objectId) retorna uma hash (sha256) do documento solicitado (aceita somente objectId como parâmetro de busca);
-- Tabela de código de erros atualizada e pequena alteração na função de retorno de erro.
-
-## Documentação
+## Documentação (v0.2.2)
+### Disponível em: https://pypi.org/project/arquea/
 
 ### Instalação
 Você pode instalar o ArqueaDB atravez do pip:
@@ -43,7 +28,7 @@ Para se conecatar com o banco de dados arquea é somente necessário passar o di
 
     from arquea import Arquea
     db = Arquea()
-    con = db.connec("/home/user/arqueadb/aq-db/")
+    con = db.connect("/home/user/arqueadb/aq-db/")
     if con['status']!=200:
         print(con)
         print('Erro ao conectar-se ao banco de dados!')

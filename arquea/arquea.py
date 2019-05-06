@@ -1,108 +1,139 @@
-import os
-from arquea.error import ReturnMessage, Error
-from arquea.files import CheckDB, InterpretFileConf, NewFileConf
-from arquea.data import Collection, CreateCollection, NewDocument, UpdateDocument, SearchDocument, RemoveDocument
-from arquea.checksum import CheckSum
-from arquea.tools import TypeDir
-class Arquea(Error):
+from os import path, listdir, mkdir
+from arquea.documents import NewDocument
+from tools import bar_type
+
+
+
+# from arquea.error import ReturnMessage
+# from arquea.conf import InterpretConfFile, NewConfFile
+
+# from arquea.data import Collection, CreateCollection, NewDocument, UpdateDocument, SearchDocument, RemoveDocument
+# from arquea.checksum import CheckSum
+
+# from arquea.info import VersionArquea
+class Arquea():
 
     def __init__(self):
         self.number_status = 0
-        self.directory = None
-    
-    def valid_connect(self):
-        if self.number_status==2:
-            return True
-        return False
-    
+        self.db_dir = None
+        
     def connect_level(self):
         return self.number_status
     
-    def connect(self, directory = None, collection = None):
-        if not directory:
-            return ReturnMessage(404).show()
-        self.directory = directory
+    def valid_connect(self, func):
+        def check(*args, **kwargs):
+            if self.number_status!=2:
+                return {'status':509, 'success':False}
+            return func(*args, **kwargs)
+        return check
+    
+    def error(self, error, success):
+        return {'status':error, 'success':success}
+    
+    def connect(self, db_dir = None, collection = None):
+        if not db_dir:
+            return {'status':404, 'success':False}
         
-        if not self.directory[-1:] == '/' or not self.directory[-1:] == '\\':
-            self.directory = directory+TypeDir().bar_type()
+        if not db_dir[-1:] == '/' or not db_dir[-1:] == '\\':
+            directory = directory+bar_type()
         
-        if not os.path.isdir(self.directory):
-            return ReturnMessage(404).show()
+        if not path.isdir(db_dir):
+            return {'status':404, 'success':False}
         
-        db = CheckDB(self.directory)
-        if not db.check():
-            return ReturnMessage(408).show()
+        # db = CheckDB(directory)
+        # if not db.check():
+        #     return ReturnMessage(408).show()
 
-        conf = InterpretFileConf(self.directory)
-        conf.start()
-        if conf.error_status():
-            return ReturnMessage(302).show()
+        # conf = InterpretConfFile(directory)
+        # conf.start()
+        # if not conf.valid_action():
+        #     return ReturnMessage(302).show()
         
-        if not 'version' in conf.get_data():
-            return ReturnMessage(301).show()
-        if not conf.get_data()['version']:
-            return ReturnMessage(301).show()
+        # if not 'version' in conf.data_conf:
+        #     return ReturnMessage(301).show()
         
-        self.conf = conf.get_data()
+        # # Verifica se a versão do banco de dados é compatível com a lib.
+        # if not conf.data_conf['version'] in VersionArquea().get_compatible():
+        #     return ReturnMessage(202).show()
+        
+        # self.conf = conf.data_conf
+        self.conf = {'version':'0.3.0'}
+
+        self.db_dir = db_dir
+
         self.number_status = 1
         
         if collection:
             return self.set_collection(collection)
-        return ReturnMessage(200).show()
+        return {'status':200, 'success':True}
+    
+    # Tudo certo daqui para baixo.
+    def create_database(self, name = None):
+        if type(name) is not str:
+            return {'status':501, 'success':False}
+        if not path.exists(name):
+            mkdir(name)
+            name = name+bar_type()+'_arquea'
+            self.number_status = 1
+            if self.create_collection('_arquea')['success']:
+                new = NewDocument(name+'_arquea').insert_one({
+                    '_id':'conf',
+                    'version':'0.3.0'
+                })
+                if new['success']:
+                    return {'status':200, 'success':True}
+            return {'status':500, 'success':False}
+        return {'status':500, 'success':False}
+    
+    def get_conf(self):
+        return self.conf
     
     def get_current_directory(self):
-        return self.directory
+        return self.db_dir
+    
+    def get_collections(self):
+        return tuple(listdir())
+
+    def create_collection(self, name = None):
+        if self.connect_level()==0:
+            return {'status':506, 'success':False}
+        if type(name) is not str:
+            return {'status':501, 'success':False}
+        
+        if not name in self.get_collections():
+            mkdir(self.db_dir+name)
+            if not name in self.get_collections():
+                return {'status':500, 'success':False}
+            return {'status':200, 'success':True}
+        return {'status':500, 'success':False}
     
     def set_collection(self, collection = None):
         if self.connect_level()==0:
-            return ReturnMessage(501).show()
+            return {'status':501, 'success':False}
         if not collection in self.get_collections():
             self.collection = None
-            return ReturnMessage(406).show()
+            return {'status':406, 'success':False}
         self.collection = collection
+        self.collection_dir = self.db_dir+collection+"/"
         self.number_status = 2
-        return ReturnMessage(200).show()
+        return {'status': 200, 'success':True}
     
     def get_current_collection(self):
         return self.collection
     
-    def get_collections(self):
-        if not self.connect_level()>=1:
-            return ()
-        return CheckDB(self.directory).get_collections()
     
-    def get_db_info(self):
-        return self.conf
+    # Tudo certo até aqui.
+
+
     
-    def get_last_err(self):
-        return ReturnMessage(self.error_code()).show()
-    
-    def create_database(self, name = None):
-        if type(name) is not str:
-            return ReturnMessage(501).show()
-        if not os.path.exists(name):
-            os.mkdir(name)
-            name = name+TypeDir().bar_type()
-            NewFileConf(name).create()
-            return ReturnMessage(200).show()
-        return ReturnMessage(505).show()
-    
-    def create_collection(self, name = None):
-        if type(name) is not str:
-            return ReturnMessage(501).show()
-        if self.connect_level()==0:
-            return ReturnMessage(509).show()
-        new = CreateCollection(self.directory)
-        new.new(name)
-        if new.error_status():
-            return ReturnMessage(new.error_code()).show()
-        return ReturnMessage(200).show()
-    
+    # def get_last_err(self):
+    #     return ReturnMessage(self.error_code()).show()
+
     def checksum_sha256(self, objectId):
         if not self.valid_connect():
             self.set_status_error(True, 509)
             return {'total':0}
-        check = CheckSum(self.directory, self.collection)
+        check = CheckSum(self.db_dir, self.collection)
         result = check.get_sha256(objectId)
         if check.error_status():
             self.set_status_error(True, check.error_code())
@@ -113,7 +144,7 @@ class Arquea(Error):
         if not self.valid_connect():
             self.set_status_error(True, 509)
             return ()
-        return Collection(self.directory, self.collection).get_documents()
+        return Collection(self.db_dir, self.collection).get_documents()
 
     def insert_one(self, data = None):
         if type(data) is not dict:
@@ -122,7 +153,7 @@ class Arquea(Error):
         if not self.valid_connect():
             self.set_status_error(True, 509)
             return {'status':509, 'objectId':None}
-        insert = NewDocument(self.directory, self.collection)
+        insert = NewDocument(self.db_dir, self.collection)
         return insert.insert_one(data)
 
     def insert_many(self, data = None):
@@ -132,7 +163,7 @@ class Arquea(Error):
         if not type(data) is list and not type(data) is tuple:
             self.set_status_error(True, 501)
             return ()
-        insert = NewDocument(self.directory, self.collection)
+        insert = NewDocument(self.db_dir, self.collection)
         return insert.insert_many(data)
 
     def find_document(self, value = None, key = None, limit = 0):
@@ -145,7 +176,7 @@ class Arquea(Error):
         if type(key) is not list and type(key) is not tuple:
             self.set_status_error(True, 501)
             return ()
-        return SearchDocument(self.directory, self.collection).value_in_key(value, key, limit)
+        return SearchDocument(self.db_dir, self.collection).value_in_key(value, key, limit)
     
     def update(self, value = None, key = None, data = None, limit = 1):
         if not self.valid_connect():
@@ -160,7 +191,7 @@ class Arquea(Error):
         if type(data) is not dict:
             self.set_status_error(True, 501)
             return {'success':0, 'total':0, 'objectId_success':[]}
-        results = UpdateDocument(self.directory, self.collection)
+        results = UpdateDocument(self.db_dir, self.collection)
         data = results.update_many(value, key, data, limit)
         if results.error_status():
             self.set_status_error(results.error_status(), results.error_code())
@@ -177,7 +208,7 @@ class Arquea(Error):
         if type(key) is not list and type(key) is not tuple:
             self.set_status_error(True, 501)
             return {'success':0, 'total':0, 'objectId_success':[]}
-        results = RemoveDocument(self.directory, self.collection)
+        results = RemoveDocument(self.db_dir, self.collection)
         data = results.remove_many(value, key, limit)
         if results.error_status():
             self.set_status_error(results.error_status(), results.error_code())

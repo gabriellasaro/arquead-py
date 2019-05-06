@@ -1,12 +1,20 @@
-class InfoArquea:
+class VersionArquea:
 
     def __init__(self):
-        self.version = "0.2.2"
+        self.version = "0.3.0"
+        self.compatible_version = ("0.3.0",)
+    
+    def get_compatible(self):
+        return self.compatible_version
+
+class InfoArquea(VersionArquea):
+
+    def __init__(self):
+        super()
         self.name = "ArqueaDB"
-        self.release_date = "ArqueaDB v{} 2019-01-10 LinuxMint-19.1-tessa/Linux".format(self.version)
+        self.release_date = "ArqueaDB v{} 2019-05-06 LinuxMint-19.1-tessa/Linux".format(self.version)
         self.repository = "https://github.com/gabriellasaro/arqueadb/"
-        self.website = "https://gabriellasaro.github.io/arqueadb/"
-        self.compatible_version = ("0.1.0", "0.2.0")
+        self.website = "https://arqueadb.lasaro.tech"
     
     def get_info(self):
         return (self.version, self.name, self.release_date, self.repository)
@@ -25,6 +33,3 @@ class InfoArquea:
     
     def get_website(self):
         return self.website
-    
-    def get_compatible(self):
-        return self.compatible_version
