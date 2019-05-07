@@ -4,6 +4,9 @@ class VersionArquea:
         self.version = "0.3.0"
         self.compatible_version = ("0.3.0",)
     
+    def __str__(self):
+        return self.version
+    
     def get_compatible(self):
         return self.compatible_version
 

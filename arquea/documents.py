@@ -75,7 +75,7 @@ class VersionDocuments(Documents):
         objects = []
         for document in self.get_documents():
             objects.append(
-                "%s/%s" % (document, self.last_version_document(document))
+                "%s%s/%s" % (self.collection_dir, document, self.last_version_document(document))
             )
         return tuple(objects)
 
@@ -100,7 +100,7 @@ class FindDocuments(VersionDocuments):
                 if self.id_only:
                     return (self.value,)
                 return (self.get_data_file(
-                    "%s/%s" % (value, self.last_version_document(self.value))
+                    "%s%s/%s" % (self.collection_dir, value, self.last_version_document(self.value))
                     ),)
             return ()
         documents = []
@@ -157,6 +157,7 @@ class FindDocuments(VersionDocuments):
         document = open(document_dir, 'r')
         data = document.read()
         document.close()
+        # Tratar possível erro no JSON
         return json.loads(data)
 
 class UpdateDocument(FindDocuments):

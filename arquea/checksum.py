@@ -6,14 +6,14 @@ class CheckSum(VersionDocuments):
         super().__init__(collection_dir)
         self.object_id = object_id
     
-    def check(self, func):
-        def wrapper():
+    def check(func):
+        def wrapper(self):
             if not self.object_id:
                 return {'success':0, 'total':0}
             if self.object_id in self.get_documents():
-                last_version = self.last_version_document(self.object_id)
+                last_version = self.object_id+'/'+self.last_version_document(self.object_id)
                 with open(self.collection_dir+last_version, 'r') as pdata:
-                    data = func(pdata)
+                    data = func(self, pdata.read())
                 return {'success':1, 'total':1, 'chechsum':data}
             return {'success':0, 'total':0}
         return wrapper
