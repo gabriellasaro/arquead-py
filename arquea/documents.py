@@ -46,6 +46,8 @@ class NewDocument(Documents):
             if object_id in self.get_documents():
                 return {'status':503, 'success':False}
         
+        data['_version'] = 1
+        
         mkdir(self.collection_dir+object_id)
         if not object_id in self.get_documents():
             return {'status':500, 'success':False}
@@ -108,7 +110,7 @@ class FindDocuments(VersionDocuments):
         for doc in self.last_version_in_documents():
             data = self.get_data_file(doc)
             if key in data:
-                if data[key] == value:
+                if data[key] == self.value:
                     if self.id_only:
                         documents.append(data['_id'])
                     else:
@@ -171,14 +173,16 @@ class UpdateDocument(FindDocuments):
             return results
         for doc in documents:
             doc.update(data)
+            doc['_version'] += 1
             object_id = doc['_id']
-            self.new_version(object_id, doc)
+            version = doc['_version']
+            self.new_version(object_id, doc, version)
             results['success']+=1
-            results['objectId_success'].append(object_id)
+            results['objectId_success'].append((object_id, version))
         return results
 
-    def new_version(self, object_id, data):
-        version = (int(self.last_version_document(object_id)[:-5])+1)+'.json'
+    def new_version(self, object_id, data, version):
+        version = str(version)+'.json'
         with open(self.collection_dir+object_id+'/'+version, 'w') as document:
             document.write(json.dumps(data))
 
