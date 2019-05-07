@@ -7,7 +7,7 @@ class CheckSum(VersionDocuments):
         self.object_id = object_id
     
     def check(self, func):
-        def wrapper(*args, **kargs):
+        def wrapper():
             if not self.object_id:
                 return {'success':0, 'total':0}
             if self.object_id in self.get_documents():
