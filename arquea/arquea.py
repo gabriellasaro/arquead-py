@@ -1,7 +1,7 @@
 from os import path, listdir, mkdir
 from arquea.documents import Documents, NewDocument, FindDocuments, UpdateDocument, RemoveDocument
 from arquea.checksum import CheckSum
-from arquea.info import VersionArquea
+from arquea.info import Version
 from arquea.tools import bar_type
 class Arquea():
 
@@ -40,7 +40,7 @@ class Arquea():
         if not data:
             return {'status':5001, 'success':False}
         
-        if not data[0]['version'] in VersionArquea().get_compatible():
+        if not data[0]['version'] in Version().get_compatible():
             return {'status':5002, 'success':False, 'message':'Imcompatível'}
         
         self.conf = data[0]
@@ -64,7 +64,7 @@ class Arquea():
             if self.create_collection('_arquea')['success']:
                 new = NewDocument(collection).insert_one({
                     '_id':'conf',
-                    'version':VersionArquea().__str__()
+                    'version':Version().__str__()
                 })
                 if new['success']:
                     return {'status':200, 'success':True}

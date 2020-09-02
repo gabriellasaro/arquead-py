@@ -1,32 +1,19 @@
 import sys
-from arquea.info import InfoArquea
+from arquea.info import Info
 from arquea.arquea import Arquea
 from arquea.error import ReturnMessage
-info = InfoArquea()
 
-def other():
-    print(info.get_release(), '\n')
-    print("Lista de comandos:")
-    print(" --create")
-    print(" --version")
-    print(" --release")
-    print(" --error-list")
-    print("     --error-list number")
-    print(" --help")
-    print(" --compatible")
+info = Info()
 
-if len(sys.argv)>=2:
+if len(sys.argv) >= 2:
     if sys.argv[1] == '--version':
         print(info.get_version())
     elif sys.argv[1] == '--release':
         print(info.get_release())
     elif sys.argv[1] == '--help':
-        print("Você pode obter ajuda no repositório oficial: {}".format(info.get_repository()))
-        print("Ou acessando o nosso website: {}".format(info.get_website()))
+        info.help()
     elif sys.argv[1] == '--compatible':
-        print("Lista de banco de dados compatíveis com a versão corrente ({}):".format(info.get_version()))
-        for version in info.get_compatible():
-            print("     {}".format(version))
+        info.show_compatible()
     elif sys.argv[1] == '--error-list':
         error_list = ReturnMessage().error_list
         if len(sys.argv)==3:
@@ -45,6 +32,6 @@ if len(sys.argv)>=2:
         else:
             print("Faltando parâmetro para criar banco de dados.")
     else:
-        other()
+        info.cli()
 else:
-    other()
+    info.cli()
