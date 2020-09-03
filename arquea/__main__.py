@@ -4,34 +4,27 @@ from arquea.arquea import Arquea
 from arquea.error import ReturnMessage
 
 info = Info()
+print(info.get_release() + "\n")
 
 if len(sys.argv) >= 2:
-    if sys.argv[1] == '--version':
-        print(info.get_version())
-    elif sys.argv[1] == '--release':
+    if sys.argv[1] == 'version':
         print(info.get_release())
-    elif sys.argv[1] == '--help':
+    elif sys.argv[1] == 'help':
         info.help()
-    elif sys.argv[1] == '--compatible':
+    elif sys.argv[1] == 'compatible':
         info.show_compatible()
-    elif sys.argv[1] == '--error-list':
+    elif sys.argv[1] == 'errors':
         error_list = ReturnMessage().error_list
-        if len(sys.argv)==3:
-            if int(sys.argv[2]) in error_list:
-                print("Código de erro: {} - {}".format(sys.argv[2], error_list[int(sys.argv[2])]))
-            else:
-                print("Código de erro não encontrado.")
-        else:
-            print("Lista de erros:")
-            for key, value in error_list.items():
-                print("     {} - {}".format(key, value))
-    elif sys.argv[1] == '--create':
-        if len(sys.argv)==3:
+        print("Lista de erros:")
+        for key, value in ReturnMessage().error_list.items():
+            print("\t{} - {}".format(key, value))
+    elif sys.argv[1] == 'create':
+        if len(sys.argv) >= 3:
             new = Arquea()
             print(new.create_database(sys.argv[2]))
         else:
-            print("Faltando parâmetro para criar banco de dados.")
+            print("\tInforme o caminho do banco. Ex.: /home/user/new-database")
     else:
-        info.cli()
+        print("\tComando não reconhecido.")
 else:
-    info.cli()
+    print("\tComando não reconhecido.")

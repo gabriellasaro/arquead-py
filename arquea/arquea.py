@@ -1,8 +1,7 @@
-from os import path, listdir, mkdir
+from os import path, listdir, mkdir, sep
+from os.path import normpath
 from arquea.documents import Documents, NewDocument, FindDocuments, UpdateDocument, RemoveDocument
-from arquea.checksum import CheckSum
 from arquea.info import Version
-from arquea.tools import bar_type
 class Arquea():
 
     def __init__(self):
@@ -27,12 +26,12 @@ class Arquea():
             return {'status':404, 'success':False}
         
         if not db_dir[-1:] == '/' and not db_dir[-1:] == '\\':
-            db_dir = db_dir+bar_type()
+            db_dir = db_dir+sep
         
         if not path.isdir(db_dir):
             return {'status':404, 'success':False}
         
-        self.db_dir = db_dir
+        self.db_dir = normpath(db_dir)
         # Check BD
         if not '_arquea' in self.get_collections():
             return {'status':5000, 'success':False}
@@ -55,7 +54,7 @@ class Arquea():
             return {'status':501, 'success':False}
         if not path.exists(db_dir):
             if not db_dir[-1:] == '/' or not db_dir[-1:] == '\\':
-                db_dir = db_dir+bar_type()
+                db_dir = db_dir+sep
             
             mkdir(db_dir)
             collection = db_dir+'_arquea/'
@@ -107,13 +106,13 @@ class Arquea():
     def get_current_collection(self):
         return self.collection
     
-    @valid_connect
-    def checksum_sha256(self, object_id):
-        return CheckSum(self.collection_dir, object_id).sha256()
+    # @valid_connect
+    # def checksum_sha256(self, object_id):
+    #     return CheckSum(self.collection_dir, object_id).sha256()
 
-    @valid_connect
-    def checksum_md5(self, object_id):
-        return CheckSum(self.collection_dir, object_id).md5()
+    # @valid_connect
+    # def checksum_md5(self, object_id):
+    #     return CheckSum(self.collection_dir, object_id).md5()
     
     @valid_connect
     def get_documents(self):

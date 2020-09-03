@@ -2,6 +2,7 @@ import json
 from random import randint
 from os import listdir, mkdir
 from shutil import rmtree
+from uuid import uuid4
 
 class Documents:
 
@@ -13,17 +14,8 @@ class Documents:
 
 class NewDocument(Documents):
     
-    def auto_object_id(self, size=40):
-        abc = [
-        'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l',
-        'z', 'x', 'c', 'v', 'b', 'n', 'm', 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', 'A', 'S',
-        'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', '1', '2', '3', '4', '5',
-        '6', '7', '8', '9', '0'
-        ]
-        auto_id = ""
-        for _ in range(size):
-            auto_id += abc[randint(0, 61)]
-        return auto_id
+    def auto_object_id(self):
+        return str(uuid4())
     
     def insert_one(self, data):
         return self.insert(data)

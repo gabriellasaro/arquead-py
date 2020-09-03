@@ -24,24 +24,19 @@ class Info:
 
     def get_name(self):
         return self.__name
-
+    
     def get_release(self):
         return f"{self.__name} v{self.__version} 2020-09-01"
 
     def help(self):
         print(f"Você pode obter ajuda no repositório oficial: {self.__repository}")
         print(f"Ou acessando o nosso website: {self.__website}")
-
-    def cli(self):
-        print(f"{self.get_release()}\n")
-        print("Lista de comandos:")
-        print(" --create")
-        print(" --version")
-        print(" --release")
-        print(" --error-list")
-        print("     --error-list number")
-        print(" --help")
-        print(" --compatible")
+        print("\nLista de comandos:")
+        print("\tcreate")
+        print("\tcompatible")
+        print("\tversion")
+        print("\terrors")
+        print("\thelp")
 
     def show_compatible(self):
         print(f"Lista de banco de dados compatíveis com a versão corrente ({self.__version.get_version()}):")
