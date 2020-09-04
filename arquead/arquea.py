@@ -1,7 +1,6 @@
 from os import path, listdir, mkdir, sep
 from os.path import normpath
-from arquea.documents import Documents, NewDocument, FindDocuments, UpdateDocument, RemoveDocument
-from arquea.info import Version
+from arquead.info import Version
 class Arquea():
 
     def __init__(self):
@@ -114,44 +113,44 @@ class Arquea():
     # def checksum_md5(self, object_id):
     #     return CheckSum(self.collection_dir, object_id).md5()
     
-    @valid_connect
-    def get_documents(self):
-        return Documents(self.collection_dir).get_documents()
+    # @valid_connect
+    # def get_documents(self):
+    #     return Documents(self.collection_dir).get_documents()
     
-    @valid_connect
-    def insert_one(self, data = None):
-        if type(data) is not dict:
-            return {'status':501}
-        return NewDocument(self.collection_dir).insert_one(data)
+    # @valid_connect
+    # def insert_one(self, data = None):
+    #     if type(data) is not dict:
+    #         return {'status':501}
+    #     return NewDocument(self.collection_dir).insert_one(data)
     
-    @valid_connect
-    def insert_many(self, data = None):
-        if not type(data) is list and not type(data) is tuple:
-            return {'status':501}
-        return NewDocument(self.collection_dir).insert_many(data)
+    # @valid_connect
+    # def insert_many(self, data = None):
+    #     if not type(data) is list and not type(data) is tuple:
+    #         return {'status':501}
+    #     return NewDocument(self.collection_dir).insert_many(data)
     
-    @valid_connect
-    def find_document(self, value = None, key = None, limit = 0):
-        if value is None:
-            return {'status':501}
-        if type(key) is not list and type(key) is not tuple:
-            return {'status':501}
-        return FindDocuments(self.collection_dir).value_in_key(value, key, limit)
+    # @valid_connect
+    # def find_document(self, value = None, key = None, limit = 0):
+    #     if value is None:
+    #         return {'status':501}
+    #     if type(key) is not list and type(key) is not tuple:
+    #         return {'status':501}
+    #     return FindDocuments(self.collection_dir).value_in_key(value, key, limit)
     
-    @valid_connect
-    def update(self, value = None, key = None, data = None, limit = 1):
-        if value is None:
-            return {'success':0, 'total':0, 'objectId_success':[]}
-        if type(key) is not list and type(key) is not tuple:
-            return {'success':0, 'total':0, 'objectId_success':[]}
-        if type(data) is not dict:
-            return {'success':0, 'total':0, 'objectId_success':[]}
-        return UpdateDocument(self.collection_dir).update_many(value, key, data, limit)
+    # @valid_connect
+    # def update(self, value = None, key = None, data = None, limit = 1):
+    #     if value is None:
+    #         return {'success':0, 'total':0, 'objectId_success':[]}
+    #     if type(key) is not list and type(key) is not tuple:
+    #         return {'success':0, 'total':0, 'objectId_success':[]}
+    #     if type(data) is not dict:
+    #         return {'success':0, 'total':0, 'objectId_success':[]}
+    #     return UpdateDocument(self.collection_dir).update_many(value, key, data, limit)
     
-    @valid_connect
-    def remove(self, value = None, key = None, limit = 1):
-        if value is None:
-            return {'success':0, 'total':0, 'objectId_success':[]}
-        if type(key) is not list and type(key) is not tuple:
-            return {'success':0, 'total':0, 'objectId_success':[]}
-        return RemoveDocument(self.collection_dir).remove_many(value, key, limit)
+    # @valid_connect
+    # def remove(self, value = None, key = None, limit = 1):
+    #     if value is None:
+    #         return {'success':0, 'total':0, 'objectId_success':[]}
+    #     if type(key) is not list and type(key) is not tuple:
+    #         return {'success':0, 'total':0, 'objectId_success':[]}
+    #     return RemoveDocument(self.collection_dir).remove_many(value, key, limit)

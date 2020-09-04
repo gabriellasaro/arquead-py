@@ -35,7 +35,6 @@ class Info:
         print("\tcreate")
         print("\tcompatible")
         print("\tversion")
-        print("\terrors")
         print("\thelp")
 
     def show_compatible(self):
