@@ -19,7 +19,7 @@ class Database:
     def get_collections(self):
         return tuple(listdir(self.__path))
     
-    def create_collection(self, name = None):
+    def create_collection(self, name=None):
         if type(name) is not str:
             return Error("Parâmetro inválido ou nulo")
         if name in self.get_collections():
@@ -44,8 +44,8 @@ class Database:
         if err.success():
             collection = Collection(self.__path)
             new = collection.insert({
-                'id':'conf',
-                'version':Version()
+                'id': 'conf',
+                'version': Version()
             })
             if new[1].err():
                 return Error("Não foi possível criar arquivo de configuração.")

@@ -6,6 +6,7 @@ from shutil import rmtree
 from arquead.document import Document
 from arquead.error import Error
 
+
 class Collection:
 
     def __init__(self, path):
@@ -29,55 +30,67 @@ class Collection:
         if object_id in self.get_documents():
                 return (None, Error("Já existe um documento com este object ID."))
         
-        data['id'] = (object_id, 1) # id and version
+        data['id'] = (object_id, 1)  # id and version
         
         mkdir(join(self.__path, object_id))
 
         if not object_id in self.get_documents():
-            return (None, Error("Erro ao criar documento."))
+            return None, Error("Erro ao criar documento.")
         
         with open(join(self.__path, object_id, "/1.json"), "w") as doc:
             doc.write(dumps(data))
-        return (object_id, Error())
+        return object_id, Error()
     
-    def value_in_key(self, value, keys, limit = 0, id_only = False):
-        if len(keys)==1:
-            return self.one_key(value, keys[0], limit, id_only)
+    def find(self, value=None, keys=None, limit=0, return_mode="content"):
+        if value is None:
+            return ()
+
+        if type(keys) is list or type(keys) is tuple:
+            return self.__many_keys(value, keys, limit, return_mode)
+        elif type(keys) is str:
+            return self.__one_key(value, keys[0], limit, return_mode)
         else:
-            return self.many_keys(value, keys, limit, id_only)
-    
-    def find_doc_by_id(self, value, id_only):
+            return ()
+
+    def __return_content(self, doc_object, return_mode):
+        if return_mode == "content":
+            return doc_object.get_current_content(),
+        elif return_mode == "id":
+            return doc_object.get_object_id()[0]
+        elif return_mode == "objectId":
+            return doc_object.get_object_id(),
+        else:
+            return doc_object,
+
+    def __find_doc_by_id(self, value, return_mode):
         if value in self.get_documents():
-            if id_only:
-                return (value, Error())
             doc = Document(join(self.__path, value))
-            return (doc.get_current_content(),)
+            return self.__return_content(doc, return_mode)
         return ()
-    
-    def one_key(self, value, key, limit, id_only):
+
+    def __one_key(self, value, key, limit, return_mode):
         if key == 'id':
-            return self.find_doc_by_id(value, id_only)
-        
-        docs = []
+            return self.__find_doc_by_id(value, return_mode)
+
         quant = 0
+        docs = []
         for doc in self.get_documents():
-            data = Document(join(self.__path, doc)).get_current_content()
+            doc_object = Document(join(self.__path, doc))
+            data = doc_object.get_current_content()
             if key in data:
                 if data[key] == value:
-                    if id_only:
-                        docs.append(doc)
-                    else:
-                        docs.append(data)
+                    docs.append(self.__return_content(doc_object, return_mode))
                     quant += 1
                     if quant == limit:
                         return tuple(docs)
         return tuple(docs)
     
-    def many_keys(self, value, keys, limit, id_only):
+    def __many_keys(self, value, keys, limit, return_mode):
         quant = 0
         docs = []
         for doc in self.get_documents():
-            data = Document(join(self.__path, doc)).get_current_content()
+            doc_object = Document(join(self.__path, doc))
+            data = doc_object.get_current_content()
             kval = keys.pop(0)
             if kval in data:
                 kval = data[kval]
@@ -88,7 +101,7 @@ class Collection:
                 if type(kval) is int or type(kval) is str:
                     continue
                 if type(kval) is list:
-                    if key>(len(kval)-1) or key<0:
+                    if key > (len(kval)-1) or key < 0:
                         continue
                     kval = kval[key]
                 else:
@@ -96,27 +109,23 @@ class Collection:
                         kval = kval[key]
             
             if value == kval:
-                if id_only:
-                    docs.append(data['id'])
-                else:
-                    docs.append(data)
+                docs.append(self.__return_content(doc_object, return_mode))
                 quant += 1
-                if quant > limit:
+                if quant == limit:
                     return tuple(docs)
         return tuple(docs)
     
-    # def remove(self, value = None, key = None, limit = 1):
-    #     if value is None:
-    #         return {'success':0, 'total':0, 'objectId_success':[]}
-    #     if type(key) is not list and type(key) is not tuple:
-    #         return {'success':0, 'total':0, 'objectId_success':[]}
-    #     documents = self.value_in_key(value, key, limit, True)
-    #     results = {'success':0, 'total':len(documents), 'objectId_success':[]}
-    #     for object_id in documents:
-    #         rmtree(join(self.__path, object_id))
-    #         results['success']+=1
-    #         results['objectId_success'].append(object_id)
-    #     return results
+    def remove(self, value=None, key=None, limit=1):
+        if value is None:
+            return ()
+        if type(key) is not list and type(key) is not tuple:
+            return ()
+
+        docs = []
+        for doc_id in self.find(value, key, limit, "id"):
+            rmtree(join(self.__path, doc_id))
+            docs.append(doc_id)
+        return tuple(docs)
     
     # def update_many(self, value, key, data, limit = 1):
     #     if "_id" in data:

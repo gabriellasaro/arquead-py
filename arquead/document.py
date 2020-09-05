@@ -2,8 +2,7 @@ from json import loads
 from hashlib import sha256, md5
 from os import sep, listdir
 from os.path import basename
-from arquead.error import Error
-from arquead.collection import Collection
+
 
 class Document:
     
@@ -14,7 +13,7 @@ class Document:
         return self.read_file(self.get_current_version())
 
     def get_object_id(self):
-        return (basename(self.__path), self.get_current_version())
+        return basename(self.__path), self.get_current_version()
     
     def get_versions(self):
         versions = []
@@ -27,7 +26,7 @@ class Document:
     def get_current_version(self):
         return str(self.get_versions().pop())
 
-    def get_path_by_version(self, version = None):
+    def get_path_by_version(self, version=None):
         return self.__path + sep + version + ".json"
 
     def read_file(self, version):
